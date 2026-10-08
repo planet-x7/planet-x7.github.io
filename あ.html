@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Planet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--text:#111;--sub:#8a8a8a;--line:#e6e6e6;--acc:#111;--on:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0b0b;--text:#f2f2f2;--sub:#7a7a7a;--line:#262626;--acc:#f2f2f2;--on:#0b0b0b}}
+:root[data-theme="dark"]{--bg:#0b0b0b;--text:#f2f2f2;--sub:#7a7a7a;--line:#262626;--acc:#f2f2f2;--on:#0b0b0b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:520px;margin:0 auto;padding:28px 20px 48px}
+h1{margin:0 0 20px;font-family:"Jost",system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:26px;font-weight:300;letter-spacing:.24em;text-indent:.24em;line-height:1.2;text-align:center}
+.date{color:var(--sub);font-size:11px;letter-spacing:.14em;text-align:center;margin:-12px 0 24px}
+#w-min{gap:0;justify-content:center}
+#w-min i{display:flex;align-items:baseline;font-style:normal}
+#body .stat small{margin-left:0}
+#body .stat b{font-variant-numeric:normal}
+h2{font-size:11px;font-weight:500;color:var(--sub);margin:32px 0 4px;letter-spacing:.14em}
+.row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.chk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--sub);background:none;flex:none;cursor:pointer;color:var(--on);font-size:12px;padding:0}
+.chk.on{background:var(--acc);border-color:var(--acc)}
+.name{flex:1;font-size:15px}
+.sub{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:13px}
+input[type=number]{width:60px;padding:4px 0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;color:var(--text);font-size:15px;text-align:right;outline:none}
+input[type=number]:focus{border-color:var(--text)}
+.sub.u{align-items:baseline;gap:6px}
+.sub.u span{width:28px;text-align:left}
+.step{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--text);font-size:15px;cursor:pointer;padding:0}
+.cn{min-width:18px;text-align:center;color:var(--text);font-size:15px}
+.stat{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);font-size:14px}
+.stat b{font-size:24px;font-weight:300;font-variant-numeric:tabular-nums}
+.stat>span{display:flex;align-items:baseline}
+.stat small{font-size:12px;color:var(--sub);margin-left:6px;width:22px;text-align:left;font-weight:400}
+.bar{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--sub);font-size:14px;padding:10px 4px;margin-right:12px;cursor:pointer;white-space:nowrap}
+.tab.on{color:var(--text);border-color:var(--acc)}
+.out{margin-left:auto;background:none;border:0;color:var(--sub);font-size:12px;cursor:pointer;padding:10px 0;white-space:nowrap}
+.ro .chk,.ro .step,.ro input{pointer-events:none}
+.ro .step{visibility:hidden}
+.auth{display:flex;flex-direction:column;gap:14px;margin-top:36px}
+.auth input{border:0;border-bottom:1px solid var(--line);background:none;color:var(--text);font-size:16px;padding:10px 0;outline:none;border-radius:0}
+.auth input:focus{border-color:var(--text)}
+.btns{display:flex;gap:10px;margin-top:8px}
+.btn{flex:1;padding:12px;border-radius:10px;border:1px solid var(--acc);background:var(--acc);color:var(--on);font-size:14px;cursor:pointer}
+.btn.g{background:none;color:var(--text)}
+.msg{color:var(--sub);font-size:12px;min-height:16px;margin-top:10px}
+.hide{display:none}
+.ed{cursor:pointer;outline:1px dashed var(--sub);outline-offset:-4px}
+.edn{color:var(--sub);font-size:12px;text-align:center;margin:0 0 14px}
+:root{--card:#f5f5f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#161616}}
+:root[data-theme="dark"]{--card:#161616}
+main{padding-bottom:96px}
+.bar{position:fixed;left:0;right:0;bottom:0;margin:0;padding:0 20px calc(env(safe-area-inset-bottom,0px) + 2px);background:var(--bg);border-top:1px solid var(--line);border-bottom:0;z-index:5}
+.tab{padding:14px 4px;border-bottom:0;border-top:2px solid transparent;margin-top:-1px}
+.tab.on{border-top-color:var(--acc)}
+.out{padding:14px 0}
+#body{display:grid;grid-template-columns:repeat(12,1fr);gap:8px}
+#body h2,#body .row{grid-column:1/-1}
+#body h2{margin:22px 0 0}
+#body .stat{flex-direction:column;align-items:center;gap:4px;border:0;background:var(--card);border-radius:12px;padding:14px 4px;font-size:11px;color:var(--sub);text-align:center}
+#body .stat b{color:var(--text);font-size:24px}
+#body .stat small{width:auto;margin-left:2px}
+#body .stat:nth-child(n+7):nth-child(-n+10){grid-column:span 3}
+#body .stat:nth-child(n+12){grid-column:span 4}
+#splash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .5s ease}
+#splash.off{opacity:0;pointer-events:none}
+#splash span{font-family:"Jost",system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:34px;font-weight:300;letter-spacing:.24em;text-indent:.24em;animation:sp .8s ease both}
+@keyframes sp{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div id="splash"><span>Planet</span></div>
+<main>
+<h1>Planet</h1>
+
+<div id="auth" class="auth hide">
+<input id="nm" placeholder="名前" autocomplete="username" maxlength="20">
+<input id="pw" type="password" placeholder="パスワード" autocomplete="current-password" maxlength="40">
+<div class="btns"><button class="btn" id="login">ログイン</button><button class="btn g" id="signup">新規作成</button></div>
+</div>
+<div class="msg" id="msg">接続中…</div>
+
+<div id="app" class="hide">
+<div class="bar"><span id="tabs" style="display:flex"></span><button class="out" id="out">ログアウト</button></div>
+<div class="date" id="date"></div>
+<div id="body">
+<h2>TODAY</h2>
+<div class="row"><button class="chk" id="c-wake"></button><div class="name">6時起き</div></div>
+<div class="row"><button class="chk" id="c-run"></button><div class="name">ランニング</div><div class="sub u"><input type="number" id="km" min="0" step="0.1" placeholder="0"><span>km</span></div></div>
+<div class="row"><button class="chk" id="c-read"></button><div class="name">読書20分</div><div class="sub u"><input type="number" id="min" min="0" step="5" placeholder="0"><span>min</span></div></div>
+<div class="row"><button class="chk" id="c-video"></button><div class="name">動画投稿</div><div class="sub"><button class="step" id="m">−</button><span class="cn" id="cn">0</span><button class="step" id="p">＋</button></div></div>
+
+<h2>STREAK</h2>
+<div class="stat">6時起き<span><b id="s-wake">0</b><small>日</small></span></div>
+<div class="stat">ランニング<span><b id="s-run">0</b><small>日</small></span></div>
+<div class="stat">読書<span><b id="s-read">0</b><small>日</small></span></div>
+<div class="stat">動画投稿<span><b id="s-video">0</b><small>日</small></span></div>
+
+<h2>TOTAL</h2>
+<div class="stat">ランニング距離<span><b id="t-km">0</b><small>km</small></span></div>
+<div class="stat">読書時間<span id="w-min"><b>0</b><small>min</small></span></div>
+<div class="stat">コンテンツ制作<span><b id="t-cn">0</b><small>本</small></span></div>
+</div>
+</div>
+</main>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,collection,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ▼ Firebaseコンソールで表示される値に書き換える
+const cfg={apiKey:"AIzaSyD76b-7_co2Mz46g-Q6T9kkZF4iNn0jJms",authDomain:"planet-x-01.firebaseapp.com",projectId:"planet-x-01",appId:"1:974251711999:web:1448b688e151f582219bca"};
+// ▲
+const EDIT=true; // 一時的な編集モード（反映後はfalse／元のファイルに戻す）
+let base={km:0,min:0,cn:0};
+
+
+setTimeout(function(){var e=document.getElementById("splash");e.className="off";setTimeout(function(){e.remove()},600)},1400);
+var LK="planet-log-v1",SK="planet-session-v1";
+var db=null,me=null,view=null,log={},others={},subbed=false,busy=false,dirty=false;
+var localLog={};try{localLog=JSON.parse(localStorage.getItem(LK)||"{}")}catch(e){}
+function $(i){return document.getElementById(i)}
+function msg(t){$("msg").textContent=t||""}
+function key(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+var today=key(new Date());
+function idOf(n){return "u"+Array.from(new TextEncoder().encode(n)).map(function(b){return b.toString(16).padStart(2,"0")}).join("")}
+async function hash(s){
+  try{var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}
+  catch(e){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "f"+h}
+}
+function streak(L,f){
+  var d=new Date();
+  if(!(L[key(d)]&&f(L[key(d)])))d.setDate(d.getDate()-1);
+  var n=0;
+  while(L[key(d)]&&f(L[key(d)])){n++;d.setDate(d.getDate()-1)}
+  return n;
+}
+function day(){return log[today]||(log[today]={wake:false,run:false,km:0,read:false,min:0,cn:0})}
+function chk(id,on){var b=$(id);b.className="chk"+(on?" on":"");b.textContent=on?"✓":""}
+function fmt(m){var h=Math.floor(m/60),r=m%60,u=function(n,l){return"<i><b>"+n+"</b><small>"+l+"</small></i>"};if(!h)return u(m,"min");return u(h,"h")+(r?u(r,"min"):"")}
+function curLog(){return view===(me&&me.id)?log:((others[view]&&others[view].days)||{})}
+function render(){
+  if(!me)return;
+  var L=curLog(),ro=view!==me.id,t=L[today]||{};
+  $("body").className=ro?"ro":"";
+  $("km").disabled=ro;$("min").disabled=ro;
+  chk("c-wake",!!t.wake);chk("c-run",!!t.run);chk("c-read",!!t.read);chk("c-video",(t.cn||0)>0);
+  $("km").value=t.km||"";$("min").value=t.min||"";$("cn").textContent=t.cn||0;
+  $("s-wake").textContent=streak(L,function(x){return x.wake});
+  $("s-run").textContent=streak(L,function(x){return x.run});
+  $("s-read").textContent=streak(L,function(x){return x.read});
+  $("s-video").textContent=streak(L,function(x){return x.cn>0||x.v});
+  var km=0,mn=0,cn=0;
+  for(var k in L){km+=+L[k].km||0;mn+=+L[k].min||0;cn+=+L[k].cn||0}
+  var B=view===me.id?base:((others[view]&&others[view].base)||{});km+=+B.km||0;mn+=+B.min||0;cn+=+B.cn||0;
+  $("t-km").textContent=Math.round(km*10)/10;
+  $("w-min").innerHTML=fmt(mn);
+  $("t-cn").textContent=cn;
+}
+function renderTabs(){
+  var h="",ids=Object.keys(others).filter(function(i){return i!==me.id}).sort();
+  var tab=function(id,l){var b=document.createElement("button");b.className="tab"+(view===id?" on":"");b.textContent=l;b.onclick=function(){view=id;renderTabs();render()};$("tabs").appendChild(b)};
+  $("tabs").innerHTML="";
+  tab(me.id,"自分");
+  ids.forEach(function(i){tab(i,others[i].name||"相手")});
+  if(!ids.length){var s=document.createElement("span");s.className="sub";s.style.fontSize="12px";s.textContent="相手の登録待ち";$("tabs").appendChild(s)}
+}
+function mine(fn){return function(){if(view!==me.id)return;fn(day());save();render()}}
+$("c-wake").onclick=mine(function(t){t.wake=!t.wake});
+$("c-run").onclick=mine(function(t){t.run=!t.run});
+$("c-read").onclick=mine(function(t){t.read=!t.read;if(t.read&&!t.min)t.min=20});
+$("c-video").onclick=mine(function(t){t.cn=t.cn>0?0:1});
+$("p").onclick=mine(function(t){t.cn++});
+$("m").onclick=mine(function(t){t.cn=Math.max(0,t.cn-1)});
+$("km").onchange=function(){var v=this.value;mine(function(t){t.km=Math.max(0,parseFloat(v)||0);if(t.km>0)t.run=true})()};
+$("min").onchange=function(){var v=this.value;mine(function(t){t.min=Math.max(0,parseInt(v)||0);if(t.min>0)t.read=true})()};
+var w=["SUN","MON","TUE","WED","THU","FRI","SAT"],n=new Date();
+$("date").textContent=key(n).replace(/-/g,".")+" "+w[n.getDay()];
+
+const ready=!cfg.apiKey.startsWith("YOUR");
+let fa=null,fdb=null,unsub=null,pendingName="";
+if(ready){const app=initializeApp(cfg);fa=getAuth(app);fdb=getFirestore(app)}
+async function emailOf(n){return(await hash("planet:"+n)).slice(0,32)+"@planet.example"}
+function save(){try{localStorage.setItem(LK,JSON.stringify(log))}catch(e){}dirty=true;flush()}
+async function flush(){
+  if(busy||!fdb||!me)return;busy=true;
+  while(dirty){dirty=false;
+    try{await setDoc(doc(fdb,"logs",me.id),{name:me.name,days:log,base:base});msg("")}
+    catch(e){msg("保存できませんでした")}
+  }
+  busy=false;
+}
+function showAuth(){$("auth").className="auth";$("app").className="hide";me=null;msg("")}
+async function enter(user){
+  const ref=doc(fdb,"logs",user.uid),s=await getDoc(ref);
+  let name=pendingName;
+  if(s.exists()){name=s.data().name||name;log=JSON.parse(JSON.stringify(s.data().days||{}));base=s.data().base||{km:0,min:0,cn:0}}
+  else{name=name||"名前未設定";log=JSON.parse(JSON.stringify(localLog));await setDoc(ref,{name:name,days:log,base:base})}
+  me={id:user.uid,name:name};view=user.uid;
+  $("auth").className="auth hide";$("app").className="";msg("");
+  if(!unsub){unsub=onSnapshot(collection(fdb,"logs"),q=>{
+    const o={};q.forEach(d=>{o[d.id]=d.data()});others=o;
+    if(me){renderTabs();render()}
+  },()=>msg("相手のデータを読み込めません"))}
+  renderTabs();render();
+}
+async function authGo(create){
+  const name=$("nm").value.trim(),pw=$("pw").value;
+  if(!name||!pw){msg("名前とパスワードを入力してください");return}
+  if(pw.length<6){msg("パスワードは6文字以上にしてください");return}
+  msg("確認中…");pendingName=name;
+  try{
+    const e=await emailOf(name);
+    if(create)await createUserWithEmailAndPassword(fa,e,pw);
+    else await signInWithEmailAndPassword(fa,e,pw);
+  }catch(err){
+    const c=err.code||"";
+    msg(c==="auth/email-already-in-use"?"その名前はすでに使われています":
+      c==="auth/weak-password"?"パスワードは6文字以上にしてください":
+      (c==="auth/invalid-credential"||c==="auth/user-not-found"||c==="auth/wrong-password")?"名前かパスワードが違います":
+      "通信に失敗しました（"+c+"）");
+  }
+}
+
+if(EDIT){
+  const rawSum=()=>{let km=0,mn=0,cn=0;for(const k in log){km+=+log[k].km||0;mn+=+log[k].min||0;cn+=+log[k].cn||0}return{km,mn,cn}};
+  const parseMin=v=>{v=String(v).trim().toLowerCase();const m=v.match(/^(\d+(?:\.\d+)?)\s*h(?:\s*(\d+))?/);if(m)return Math.round(parseFloat(m[1])*60+(+m[2]||0));const n=parseFloat(v);return isNaN(n)?null:Math.round(n)};
+  const dstr=i=>{const d=new Date();d.setDate(d.getDate()-i);return key(d)};
+  const ent=k=>log[k]||(log[k]={wake:false,run:false,km:0,read:false,min:0,cn:0});
+  const setF={wake:(x,v)=>{x.wake=v},run:(x,v)=>{x.run=v},read:(x,v)=>{x.read=v},video:(x,v)=>{x.v=v;if(!v)x.cn=0}};
+  const isDone={wake:x=>x.wake,run:x=>x.run,read:x=>x.read,video:x=>x.cn>0||x.v};
+  const setStreak=(kind,n)=>{
+    const t=log[today],a=(t&&isDone[kind](t))?0:1;
+    if(n===0){[0,1].forEach(i=>{const e=log[dstr(i)];if(e)setF[kind](e,false)})}
+    else{for(let i=0;i<n;i++)setF[kind](ent(dstr(a+i)),true);const c=log[dstr(a+n)];if(c)setF[kind](c,false)}
+  };
+  const lab={wake:"6時起き",run:"ランニング",read:"読書",video:"動画投稿"};
+  Object.keys(lab).forEach(k=>{
+    const el=$("s-"+k).closest(".stat");el.classList.add("ed");
+    el.onclick=()=>{if(!me||view!==me.id)return;const v=prompt(lab[k]+"の継続日数（日）",$("s-"+k).textContent);if(v===null)return;const n=parseInt(v);if(isNaN(n)||n<0)return;setStreak(k,n);save();render()};
+  });
+  $("t-km").closest(".stat").classList.add("ed");
+  $("t-km").closest(".stat").onclick=()=>{if(!me||view!==me.id)return;const v=prompt("ランニング累計距離（km）",String(Math.round((rawSum().km+(base.km||0))*10)/10));if(v===null)return;const n=parseFloat(v);if(isNaN(n)||n<0)return;base.km=Math.round((n-rawSum().km)*10)/10;save();render()};
+  $("w-min").closest(".stat").classList.add("ed");
+  $("w-min").closest(".stat").onclick=()=>{if(!me||view!==me.id)return;const v=prompt("読書累計時間（分、または 1h30 の形式）",String(rawSum().mn+(base.min||0)));if(v===null)return;const n=parseMin(v);if(n===null||n<0)return;base.min=n-rawSum().mn;save();render()};
+  $("t-cn").closest(".stat").classList.add("ed");
+  $("t-cn").closest(".stat").onclick=()=>{if(!me||view!==me.id)return;const v=prompt("コンテンツ制作累計（本）",String(rawSum().cn+(base.cn||0)));if(v===null)return;const n=parseInt(v);if(isNaN(n)||n<0)return;base.cn=n-rawSum().cn;save();render()};
+  const note=document.createElement("div");note.className="edn";note.textContent="編集モード：STREAKとTOTALの数字をタップして修正";
+  $("body").parentNode.insertBefore(note,$("body"));
+}
+$("login").onclick=()=>authGo(false);
+$("signup").onclick=()=>authGo(true);
+$("out").onclick=()=>{if(fa)signOut(fa)};
+if(!ready){showAuth();msg("firebaseConfig が未設定です")}
+else onAuthStateChanged(fa,u=>{
+  if(u){enter(u).catch(()=>msg("読み込みに失敗しました"))}
+  else{if(unsub){unsub();unsub=null}showAuth()}
+});
+</script>
+</body>
+</html>
