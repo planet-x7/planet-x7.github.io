@@ -51,6 +51,15 @@ input[type=number]:focus{border-color:var(--text)}
 .btn.g{background:none;color:var(--text)}
 .msg{color:var(--sub);font-size:12px;min-height:16px;margin-top:10px}
 .hide{display:none}
+.lk .row{opacity:.5;pointer-events:none}
+.battle{margin:0 0 6px}
+.bh{font-size:11px;letter-spacing:.14em;color:var(--sub);text-align:center;margin:0 0 10px}
+.bt{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--card);border-radius:14px;padding:18px 12px}
+.bs{flex:1;text-align:center;min-width:0}
+.bs b{display:block;font-size:44px;font-weight:300;line-height:1.1;color:var(--sub)}
+.bs b.lead{color:var(--text)}
+.bs span{display:block;font-size:12px;color:var(--sub);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vs{font-size:11px;color:var(--sub);letter-spacing:.14em}
 
 :root{--card:#f5f5f5}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#161616}}
@@ -66,8 +75,8 @@ main{padding-bottom:96px}
 #body .stat{flex-direction:column;align-items:center;gap:4px;border:0;background:var(--card);border-radius:12px;padding:14px 4px;font-size:11px;color:var(--sub);text-align:center}
 #body .stat b{color:var(--text);font-size:24px}
 #body .stat small{width:auto;margin-left:2px}
-#body .stat:nth-child(n+7):nth-child(-n+10){grid-column:span 3}
-#body .stat:nth-child(n+12){grid-column:span 4}
+#body .s4{grid-column:span 3}
+#body .s3{grid-column:span 4}
 #splash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .5s ease}
 #splash.off{opacity:0;pointer-events:none}
 #splash span{font-family:"Jost",system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:34px;font-weight:300;letter-spacing:.24em;text-indent:.24em;animation:sp .8s ease both}
@@ -89,26 +98,32 @@ main{padding-bottom:96px}
 <div id="app" class="hide">
 <div class="bar"><span id="tabs" style="display:flex"></span><button class="out" id="out">ログアウト</button></div>
 <div class="date" id="date"></div>
+<div class="battle"><div class="bh">WEEKLY BATTLE</div><div class="bt"><div class="bs"><b id="b-me">0</b><span>自分</span></div><div class="vs">VS</div><div class="bs"><b id="b-op">–</b><span id="b-opn">相手待ち</span></div></div></div>
 <div id="body">
 <h2>TODAY</h2>
 <div class="row"><button class="chk" id="c-wake"></button><div class="name">6時起き</div></div>
 <div class="row"><button class="chk" id="c-run"></button><div class="name">ランニング</div><div class="sub u"><input type="number" id="km" min="0" step="0.1" placeholder="0"><span>km</span></div></div>
+<div class="row"><button class="chk" id="c-rs"></button><div class="name">RUN START6:20</div></div>
 <div class="row"><button class="chk" id="c-read"></button><div class="name">読書20分</div><div class="sub u"><input type="number" id="min" min="0" step="5" placeholder="0"><span>min</span></div></div>
 <div class="row"><button class="chk" id="c-video"></button><div class="name">動画投稿</div><div class="sub"><button class="step" id="m">−</button><span class="cn" id="cn">0</span><button class="step" id="p">＋</button></div></div>
 
 <h2>STREAK</h2>
-<div class="stat">6時起き<span><b id="s-wake">0</b><small>日</small></span></div>
-<div class="stat">ランニング<span><b id="s-run">0</b><small>日</small></span></div>
-<div class="stat">読書<span><b id="s-read">0</b><small>日</small></span></div>
-<div class="stat">動画投稿<span><b id="s-video">0</b><small>日</small></span></div>
+<div class="stat s4">6時起き<span><b id="s-wake">0</b><small>日</small></span></div>
+<div class="stat s4">ランニング<span><b id="s-run">0</b><small>日</small></span></div>
+<div class="stat s4">読書<span><b id="s-read">0</b><small>日</small></span></div>
+<div class="stat s4">動画投稿<span><b id="s-video">0</b><small>日</small></span></div>
 
 <h2>TOTAL</h2>
-<div class="stat">ランニング距離<span><b id="t-km">0</b><small>km</small></span></div>
-<div class="stat">読書時間<span id="w-min"><b>0</b><small>min</small></span></div>
-<div class="stat">コンテンツ制作<span><b id="t-cn">0</b><small>本</small></span></div>
+<div class="stat s3">ランニング距離<span><b id="t-km">0</b><small>km</small></span></div>
+<div class="stat s3">読書時間<span id="w-min"><b>0</b><small>min</small></span></div>
+<div class="stat s3">コンテンツ制作<span><b id="t-cn">0</b><small>本</small></span></div>
 </div>
 </div>
 </main>
+<script>
+setTimeout(function(){var e=document.getElementById("splash");if(!e)return;e.className="off";setTimeout(function(){e.remove()},600)},1400);
+setTimeout(function(){if(!window.__ready){var m=document.getElementById("msg");if(m)m.textContent="読み込めませんでした。https://planet-x7.github.io/ から開いてください"}},4000);
+</script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -120,7 +135,7 @@ const cfg={apiKey:"AIzaSyD76b-7_co2Mz46g-Q6T9kkZF4iNn0jJms",authDomain:"planet-x
 let base={km:0,min:0,cn:0};
 
 
-setTimeout(function(){var e=document.getElementById("splash");e.className="off";setTimeout(function(){e.remove()},600)},1400);
+window.__ready=true;
 var LK="planet-log-v1",SK="planet-session-v1";
 var db=null,me=null,view=null,log={},others={},subbed=false,busy=false,dirty=false;
 var localLog={};try{localLog=JSON.parse(localStorage.getItem(LK)||"{}")}catch(e){}
@@ -140,21 +155,29 @@ function streak(L,f){
   while(L[key(d)]&&f(L[key(d)])){n++;d.setDate(d.getDate()-1)}
   return n;
 }
-function day(){return log[today]||(log[today]={wake:false,run:false,km:0,read:false,min:0,cn:0})}
+function day(){return log[today]||(log[today]={wake:false,run:false,rs:false,km:0,read:false,min:0,cn:0})}
 function chk(id,on){var b=$(id);b.className="chk"+(on?" on":"");b.textContent=on?"✓":""}
 function fmt(m){var h=Math.floor(m/60),r=m%60,u=function(n,l){return"<i><b>"+n+"</b><small>"+l+"</small></i>"};if(!h)return u(m,"min");return u(h,"h")+(r?u(r,"min"):"")}
+var lastLock=false;
+function locked(){return new Date().getHours()>=21}
+function weekScore(L){var d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));var s=0;for(var i=0;i<7;i++){var x=L[key(d)];if(x)s+=(x.wake?1:0)+(x.run?1:0)+(x.rs?1:0)+(x.read?1:0);d.setDate(d.getDate()+1)}return s}
 function curLog(){return view===(me&&me.id)?log:((others[view]&&others[view].days)||{})}
 function render(){
   if(!me)return;
   var L=curLog(),ro=view!==me.id,t=L[today]||{};
-  $("body").className=ro?"ro":"";
-  $("km").disabled=ro;$("min").disabled=ro;
-  chk("c-wake",!!t.wake);chk("c-run",!!t.run);chk("c-read",!!t.read);chk("c-video",(t.cn||0)>0);
+  lastLock=locked();var lk=!ro&&lastLock;
+  $("body").className=(ro?"ro":"")+(lk?" lk":"");
+  $("km").disabled=ro||lk;$("min").disabled=ro||lk;
+  chk("c-wake",!!t.wake);chk("c-run",!!t.run);chk("c-rs",!!t.rs);chk("c-read",!!t.read);chk("c-video",(t.cn||0)>0);
   $("km").value=t.km||"";$("min").value=t.min||"";$("cn").textContent=t.cn||0;
   $("s-wake").textContent=streak(L,function(x){return x.wake});
   $("s-run").textContent=streak(L,function(x){return x.run});
   $("s-read").textContent=streak(L,function(x){return x.read});
   $("s-video").textContent=streak(L,function(x){return x.cn>0||x.v});
+  var ids=Object.keys(others).filter(function(i){return i!==me.id}).sort(),ms=weekScore(log),os=-1;
+  if(ids.length){var o=others[ids[0]];os=weekScore(o.days||{});$("b-op").textContent=os;$("b-opn").textContent=o.name||"相手"}
+  else{$("b-op").textContent="–";$("b-opn").textContent="相手待ち"}
+  $("b-me").textContent=ms;$("b-me").className=ms>os&&os>=0?"lead":"";$("b-op").className=os>ms?"lead":"";
   var km=0,mn=0,cn=0;
   for(var k in L){km+=+L[k].km||0;mn+=+L[k].min||0;cn+=+L[k].cn||0}
   var B=view===me.id?base:((others[view]&&others[view].base)||{});km+=+B.km||0;mn+=+B.min||0;cn+=+B.cn||0;
@@ -170,9 +193,10 @@ function renderTabs(){
   ids.forEach(function(i){tab(i,others[i].name||"相手")});
   if(!ids.length){var s=document.createElement("span");s.className="sub";s.style.fontSize="12px";s.textContent="相手の登録待ち";$("tabs").appendChild(s)}
 }
-function mine(fn){return function(){if(view!==me.id)return;fn(day());save();render()}}
+function mine(fn){return function(){if(view!==me.id||locked())return;fn(day());save();render()}}
 $("c-wake").onclick=mine(function(t){t.wake=!t.wake});
 $("c-run").onclick=mine(function(t){t.run=!t.run});
+$("c-rs").onclick=mine(function(t){t.rs=!t.rs});
 $("c-read").onclick=mine(function(t){t.read=!t.read;if(t.read&&!t.min)t.min=20});
 $("c-video").onclick=mine(function(t){t.cn=t.cn>0?0:1});
 $("p").onclick=mine(function(t){t.cn++});
@@ -227,6 +251,7 @@ async function authGo(create){
   }
 }
 
+setInterval(function(){var k=key(new Date());if(!me)return;if(k!==today){today=k;render()}else if(locked()!==lastLock)render()},30000);
 $("login").onclick=()=>authGo(false);
 $("signup").onclick=()=>authGo(true);
 $("out").onclick=()=>{if(fa)signOut(fa)};
