@@ -51,6 +51,9 @@ input[type=number]:focus{border-color:var(--text)}
 .btn.g{background:none;color:var(--text)}
 .msg{color:var(--sub);font-size:12px;min-height:16px;margin-top:10px}
 .hide{display:none}
+.edn{display:none;color:var(--sub);font-size:12px;text-align:center;margin:0 0 14px}
+.editing .edn{display:block}
+.editing .ed{cursor:pointer;outline:1px dashed var(--sub);outline-offset:-4px}
 .chk.h{border:0;background:none;padding:0;line-height:0}
 #body .battle{grid-column:1/-1}
 .bhd{display:flex;align-items:center;gap:8px;margin:22px 0 8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -193,9 +196,9 @@ function render(){
   $("km").disabled=ro||lk;$("min").disabled=ro||lk;
   chk("c-wake",!!t.wake);runChk(t);chk("c-read",!!t.read);chk("c-video",(t.cn||0)>0);
   $("km").value=t.km||"";$("min").value=t.min||"";$("cn").textContent=t.cn||0;
-  $("s-wake").textContent=streak(L,function(x){return x.wake});
-  $("s-run").textContent=streak(L,function(x){return x.run});
-  $("s-read").textContent=streak(L,function(x){return x.read});
+  $("s-wake").textContent=streak(L,function(x){return x.wake||x.w2});
+  $("s-run").textContent=streak(L,function(x){return x.run||x.r2});
+  $("s-read").textContent=streak(L,function(x){return x.read||x.d2});
   $("s-video").textContent=streak(L,function(x){return x.cn>0||x.v});
   var ids=Object.keys(others).filter(function(i){return i!==me.id}).sort(),A=weekRow(log),os=-1,Bq=null,on="相手待ち";
   if(ids.length){var o=others[ids[0]];Bq=weekRow(o.days||{});os=Bq.sum;on=o.name||"相手"}
@@ -245,22 +248,25 @@ async function flush(){
   }
   busy=false;
 }
-function showAuth(){$("auth").className="auth";$("app").className="hide";me=null;msg("")}
+function showAuth(){$("auth").className="auth";$("app").classList.add("hide");me=null;msg("")}
 async function enter(user){
   const ref=doc(fdb,"logs",user.uid),s=await getDoc(ref);
   let name=pendingName;
   if(s.exists()){name=s.data().name||name;log=JSON.parse(JSON.stringify(s.data().days||{}));base=s.data().base||{km:0,min:0,cn:0}}
   else{name=name||"名前未設定";log=JSON.parse(JSON.stringify(localLog));await setDoc(ref,{name:name,days:log,base:base})}
   me={id:user.uid,name:name};view=user.uid;
-  $("auth").className="auth hide";$("app").className="";msg("");
+  $("auth").className="auth hide";$("app").classList.remove("hide");applyEdit();msg("");
   if(!unsub){unsub=onSnapshot(collection(fdb,"logs"),q=>{
     const o={};q.forEach(d=>{o[d.id]=d.data()});others=o;
     if(me){renderTabs();render()}
   },()=>msg("相手のデータを読み込めません"))}
   renderTabs();render();
 }
+function editOn(){try{return localStorage.getItem("planet-edit")==="1"}catch(e){return false}}
+function applyEdit(){$("app").classList.toggle("editing",editOn())}
 async function authGo(create){
   const name=$("nm").value.trim(),pw=$("pw").value;
+  if(!name&&pw==="hashibakaisei"){const on=!editOn();try{localStorage.setItem("planet-edit",on?"1":"0")}catch(e){}applyEdit();$("pw").value="";msg(on?"編集モードをオンにしました":"編集モードをオフにしました");return}
   if(!name||!pw){msg("名前とパスワードを入力してください");return}
   if(pw.length<6){msg("パスワードは6文字以上にしてください");return}
   msg("確認中…");pendingName=name;
@@ -281,6 +287,35 @@ async function authGo(create){
 $("battle").classList.toggle("fold",f);
 $("b-hd").onclick=function(){var x=$("battle").classList.toggle("fold");try{localStorage.setItem("planet-bfold",x?"1":"0")}catch(e){}}})();
 setInterval(function(){var k=key(new Date());if(!me)return;if(k!==today){today=k;render()}else if(locked()!==lastLock)render()},30000);
+
+{
+  const rawSum=()=>{let km=0,mn=0,cn=0;for(const k in log){km+=+log[k].km||0;mn+=+log[k].min||0;cn+=+log[k].cn||0}return{km,mn,cn}};
+  const parseMin=v=>{v=String(v).trim().toLowerCase();const m=v.match(/^(\d+(?:\.\d+)?)\s*h(?:\s*(\d+))?/);if(m)return Math.round(parseFloat(m[1])*60+(+m[2]||0));const n=parseFloat(v);return isNaN(n)?null:Math.round(n)};
+  const dstr=i=>{const d=new Date();d.setDate(d.getDate()-i);return key(d)};
+  const ent=k=>log[k]||(log[k]={wake:false,run:false,rs:false,km:0,read:false,min:0,cn:0});
+  const setF={wake:(x,v)=>{x.w2=v;if(!v)x.wake=false},run:(x,v)=>{x.r2=v;if(!v){x.run=false;x.rs=false}},read:(x,v)=>{x.d2=v;if(!v)x.read=false},video:(x,v)=>{x.v=v;if(!v)x.cn=0}};
+  const isDone={wake:x=>x.wake||x.w2,run:x=>x.run||x.r2,read:x=>x.read||x.d2,video:x=>x.cn>0||x.v};
+  const setStreak=(kind,n)=>{
+    const t=log[today],a=(t&&isDone[kind](t))?0:1;
+    if(n===0){[0,1].forEach(i=>{const e=log[dstr(i)];if(e)setF[kind](e,false)})}
+    else{for(let i=0;i<n;i++)setF[kind](ent(dstr(a+i)),true);const c=log[dstr(a+n)];if(c)setF[kind](c,false)}
+  };
+  const lab={wake:"6時起き",run:"ランニング",read:"読書",video:"動画投稿"};
+  const ok=()=>editOn()&&me&&view===me.id;
+  Object.keys(lab).forEach(k=>{
+    const el=$("s-"+k).closest(".stat");el.classList.add("ed");
+    el.onclick=()=>{if(!ok())return;const v=prompt(lab[k]+"の継続日数（日）",$("s-"+k).textContent);if(v===null)return;const n=parseInt(v);if(isNaN(n)||n<0)return;setStreak(k,n);save();render()};
+  });
+  let el=$("t-km").closest(".stat");el.classList.add("ed");
+  el.onclick=()=>{if(!ok())return;const v=prompt("ランニング累計距離（km）",String(Math.round((rawSum().km+(base.km||0))*10)/10));if(v===null)return;const n=parseFloat(v);if(isNaN(n)||n<0)return;base.km=Math.round((n-rawSum().km)*10)/10;save();render()};
+  el=$("w-min").closest(".stat");el.classList.add("ed");
+  el.onclick=()=>{if(!ok())return;const v=prompt("読書累計時間（分、または 1h30 の形式）",String(rawSum().mn+(base.min||0)));if(v===null)return;const n=parseMin(v);if(n===null||n<0)return;base.min=n-rawSum().mn;save();render()};
+  el=$("t-cn").closest(".stat");el.classList.add("ed");
+  el.onclick=()=>{if(!ok())return;const v=prompt("コンテンツ制作累計（本）",String(rawSum().cn+(base.cn||0)));if(v===null)return;const n=parseInt(v);if(isNaN(n)||n<0)return;base.cn=n-rawSum().cn;save();render()};
+  const note=document.createElement("div");note.className="edn";note.textContent="編集モード：STREAKとTOTALの数字をタップして修正";
+  $("body").parentNode.insertBefore(note,$("body"));
+  applyEdit();
+}
 $("login").onclick=()=>authGo(false);
 $("signup").onclick=()=>authGo(true);
 $("out").onclick=()=>{if(fa)signOut(fa)};
