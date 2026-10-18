@@ -51,15 +51,31 @@ input[type=number]:focus{border-color:var(--text)}
 .btn.g{background:none;color:var(--text)}
 .msg{color:var(--sub);font-size:12px;min-height:16px;margin-top:10px}
 .hide{display:none}
-.lk .row{opacity:.5;pointer-events:none}
-.battle{margin:0 0 6px}
-.bh{font-size:11px;letter-spacing:.14em;color:var(--sub);text-align:center;margin:0 0 10px}
-.bt{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--card);border-radius:14px;padding:18px 12px}
+.chk.h{border:0;background:none;padding:0;line-height:0}
+#body .battle{grid-column:1/-1}
+.bhd{display:flex;align-items:center;gap:8px;margin:22px 0 8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bh{font-size:11px;font-weight:500;color:var(--sub);letter-spacing:.14em}
+.bmini{display:none;margin-left:auto;font-size:13px;color:var(--text)}
+.fold .bmini{display:inline}
+.bfold{margin-left:auto;background:none;border:0;color:var(--sub);padding:4px;cursor:pointer;line-height:0}
+.fold .bfold{margin-left:4px}
+#battle:not(.fold) .bfold svg{transform:rotate(180deg)}
+#battle.fold #b-main{display:none}
+.bt{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--card);border-radius:14px;padding:16px 12px;margin-bottom:14px}
 .bs{flex:1;text-align:center;min-width:0}
 .bs b{display:block;font-size:44px;font-weight:300;line-height:1.1;color:var(--sub)}
 .bs b.lead{color:var(--text)}
 .bs span{display:block;font-size:12px;color:var(--sub);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vs{font-size:11px;color:var(--sub);letter-spacing:.14em}
+.bdays,.bsq{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.bdays span{font-size:10px;color:var(--sub);text-align:center}
+.bcap{font-size:11px;color:var(--sub);margin:12px 0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sq{position:relative;aspect-ratio:1;border-radius:8px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--sub);overflow:hidden}
+.sq::before{content:"";position:absolute;inset:0;background:var(--acc);opacity:var(--o,0)}
+.sq i{position:relative;font-style:normal}
+.sq.hi{color:var(--on)}
+.sq.td{outline:1.5px solid var(--text);outline-offset:-1.5px}
+.lk .row{opacity:.5;pointer-events:none}
 
 :root{--card:#f5f5f5}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#161616}}
@@ -98,15 +114,18 @@ main{padding-bottom:96px}
 <div id="app" class="hide">
 <div class="bar"><span id="tabs" style="display:flex"></span><button class="out" id="out">ログアウト</button></div>
 <div class="date" id="date"></div>
-<div class="battle"><div class="bh">WEEKLY BATTLE</div><div class="bt"><div class="bs"><b id="b-me">0</b><span>自分</span></div><div class="vs">VS</div><div class="bs"><b id="b-op">–</b><span id="b-opn">相手待ち</span></div></div></div>
 <div id="body">
 <h2>TODAY</h2>
 <div class="row"><button class="chk" id="c-wake"></button><div class="name">6時起き</div></div>
-<div class="row"><button class="chk" id="c-run"></button><div class="name">ランニング</div><div class="sub u"><input type="number" id="km" min="0" step="0.1" placeholder="0"><span>km</span></div></div>
-<div class="row"><button class="chk" id="c-rs"></button><div class="name">RUN START6:20</div></div>
+<div class="row"><button class="chk" id="c-run"></button><div class="name">ランニング｜6:20</div><div class="sub u"><input type="number" id="km" min="0" step="0.1" placeholder="0"><span>km</span></div></div>
 <div class="row"><button class="chk" id="c-read"></button><div class="name">読書20分</div><div class="sub u"><input type="number" id="min" min="0" step="5" placeholder="0"><span>min</span></div></div>
 <div class="row"><button class="chk" id="c-video"></button><div class="name">動画投稿</div><div class="sub"><button class="step" id="m">−</button><span class="cn" id="cn">0</span><button class="step" id="p">＋</button></div></div>
 
+<div class="battle" id="battle"><div class="bhd" id="b-hd"><span class="bh">WEEKLY BATTLE</span><span class="bmini" id="b-mini"></span><button class="bfold" id="b-fold" aria-label="折りたたむ"><svg viewBox="0 0 12 12" width="14" height="14"><path d="M2 4.5L6 8.5L10 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+<div id="b-main"><div class="bt"><div class="bs"><b id="b-me">0</b><span id="b-nme"></span></div><div class="vs">VS</div><div class="bs"><b id="b-op">–</b><span id="b-nop"></span></div></div>
+<div class="bdays"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div>
+<div class="bcap" id="b-cme"></div><div class="bsq" id="b-rme"></div>
+<div class="bcap" id="b-cop"></div><div class="bsq" id="b-rop"></div></div></div>
 <h2>STREAK</h2>
 <div class="stat s4">6時起き<span><b id="s-wake">0</b><small>日</small></span></div>
 <div class="stat s4">ランニング<span><b id="s-run">0</b><small>日</small></span></div>
@@ -160,7 +179,11 @@ function chk(id,on){var b=$(id);b.className="chk"+(on?" on":"");b.textContent=on
 function fmt(m){var h=Math.floor(m/60),r=m%60,u=function(n,l){return"<i><b>"+n+"</b><small>"+l+"</small></i>"};if(!h)return u(m,"min");return u(h,"h")+(r?u(r,"min"):"")}
 var lastLock=false;
 function locked(){return new Date().getHours()>=21}
-function weekScore(L){var d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));var s=0;for(var i=0;i<7;i++){var x=L[key(d)];if(x)s+=(x.wake?1:0)+(x.run?1:0)+(x.rs?1:0)+(x.read?1:0);d.setDate(d.getDate()+1)}return s}
+function dayScore(x){return x?(x.wake?1:0)+(x.run?1:0)+(x.rs?1:0)+(x.read?1:0):0}
+function sqHtml(sc,cls,fut){return'<div class="sq'+cls+(sc>=3?" hi":"")+'" style="--o:'+[0,.22,.45,.72,1][sc]+'"><i>'+(fut?"":sc)+'</i></div>'}
+function weekRow(L){var d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));var t=key(new Date()),h="",sum=0;for(var i=0;i<7;i++){var k=key(d),sc=dayScore(L[k]);sum+=sc;h+=sqHtml(sc,k===t?" td":"",k>t);d.setDate(d.getDate()+1)}return{h:h,sum:sum}}
+function blankRow(){var h="";for(var i=0;i<7;i++)h+=sqHtml(0,"",true);return h}
+function runChk(t){var b=$("c-run"),st=t.run?(t.rs?2:1):0;b.className="chk h";b.innerHTML='<svg viewBox="0 0 22 22" width="22" height="22"><defs><clipPath id="hc"><rect x="0" y="0" width="11" height="22"/></clipPath></defs>'+(st>0?'<path d="M11 .75A10.25 10.25 0 0 0 11 21.25Z" fill="var(--acc)"/>':'')+(st>1?'<path d="M11 .75A10.25 10.25 0 0 1 11 21.25Z" fill="var(--acc)"/>':'')+'<circle cx="11" cy="11" r="10.25" fill="none" stroke="'+(st?'var(--acc)':'var(--sub)')+'" stroke-width="1.5"/>'+(st>0?'<path d="M6 11.5L9.5 15L16 7.5" fill="none" stroke="var(--on)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'+(st===1?' clip-path="url(#hc)"':'')+'/>':'')+'</svg>'}
 function curLog(){return view===(me&&me.id)?log:((others[view]&&others[view].days)||{})}
 function render(){
   if(!me)return;
@@ -168,16 +191,20 @@ function render(){
   lastLock=locked();var lk=!ro&&lastLock;
   $("body").className=(ro?"ro":"")+(lk?" lk":"");
   $("km").disabled=ro||lk;$("min").disabled=ro||lk;
-  chk("c-wake",!!t.wake);chk("c-run",!!t.run);chk("c-rs",!!t.rs);chk("c-read",!!t.read);chk("c-video",(t.cn||0)>0);
+  chk("c-wake",!!t.wake);runChk(t);chk("c-read",!!t.read);chk("c-video",(t.cn||0)>0);
   $("km").value=t.km||"";$("min").value=t.min||"";$("cn").textContent=t.cn||0;
   $("s-wake").textContent=streak(L,function(x){return x.wake});
   $("s-run").textContent=streak(L,function(x){return x.run});
   $("s-read").textContent=streak(L,function(x){return x.read});
   $("s-video").textContent=streak(L,function(x){return x.cn>0||x.v});
-  var ids=Object.keys(others).filter(function(i){return i!==me.id}).sort(),ms=weekScore(log),os=-1;
-  if(ids.length){var o=others[ids[0]];os=weekScore(o.days||{});$("b-op").textContent=os;$("b-opn").textContent=o.name||"相手"}
-  else{$("b-op").textContent="–";$("b-opn").textContent="相手待ち"}
-  $("b-me").textContent=ms;$("b-me").className=ms>os&&os>=0?"lead":"";$("b-op").className=os>ms?"lead":"";
+  var ids=Object.keys(others).filter(function(i){return i!==me.id}).sort(),A=weekRow(log),os=-1,Bq=null,on="相手待ち";
+  if(ids.length){var o=others[ids[0]];Bq=weekRow(o.days||{});os=Bq.sum;on=o.name||"相手"}
+  var ms=A.sum;
+  $("b-me").textContent=ms;$("b-me").className=ms>os&&os>=0?"lead":"";
+  $("b-op").textContent=os>=0?os:"–";$("b-op").className=os>ms?"lead":"";
+  $("b-nme").textContent=me.name;$("b-nop").textContent=on;$("b-cme").textContent=me.name;$("b-cop").textContent=on;
+  $("b-rme").innerHTML=A.h;$("b-rop").innerHTML=Bq?Bq.h:blankRow();
+  $("b-mini").textContent=ms+" - "+(os>=0?os:"–");
   var km=0,mn=0,cn=0;
   for(var k in L){km+=+L[k].km||0;mn+=+L[k].min||0;cn+=+L[k].cn||0}
   var B=view===me.id?base:((others[view]&&others[view].base)||{});km+=+B.km||0;mn+=+B.min||0;cn+=+B.cn||0;
@@ -189,14 +216,13 @@ function renderTabs(){
   var h="",ids=Object.keys(others).filter(function(i){return i!==me.id}).sort();
   var tab=function(id,l){var b=document.createElement("button");b.className="tab"+(view===id?" on":"");b.textContent=l;b.onclick=function(){view=id;renderTabs();render()};$("tabs").appendChild(b)};
   $("tabs").innerHTML="";
-  tab(me.id,"自分");
+  tab(me.id,me.name);
   ids.forEach(function(i){tab(i,others[i].name||"相手")});
   if(!ids.length){var s=document.createElement("span");s.className="sub";s.style.fontSize="12px";s.textContent="相手の登録待ち";$("tabs").appendChild(s)}
 }
 function mine(fn){return function(){if(view!==me.id||locked())return;fn(day());save();render()}}
 $("c-wake").onclick=mine(function(t){t.wake=!t.wake});
-$("c-run").onclick=mine(function(t){t.run=!t.run});
-$("c-rs").onclick=mine(function(t){t.rs=!t.rs});
+$("c-run").onclick=mine(function(t){if(!t.run){t.run=true;t.rs=false}else if(!t.rs){t.rs=true}else{t.run=false;t.rs=false}});
 $("c-read").onclick=mine(function(t){t.read=!t.read;if(t.read&&!t.min)t.min=20});
 $("c-video").onclick=mine(function(t){t.cn=t.cn>0?0:1});
 $("p").onclick=mine(function(t){t.cn++});
@@ -251,6 +277,9 @@ async function authGo(create){
   }
 }
 
+(function(){var f=false;try{f=localStorage.getItem("planet-bfold")==="1"}catch(e){}
+$("battle").classList.toggle("fold",f);
+$("b-hd").onclick=function(){var x=$("battle").classList.toggle("fold");try{localStorage.setItem("planet-bfold",x?"1":"0")}catch(e){}}})();
 setInterval(function(){var k=key(new Date());if(!me)return;if(k!==today){today=k;render()}else if(locked()!==lastLock)render()},30000);
 $("login").onclick=()=>authGo(false);
 $("signup").onclick=()=>authGo(true);
