@@ -182,7 +182,7 @@ function chk(id,on){var b=$(id);b.className="chk"+(on?" on":"");b.textContent=on
 function fmt(m){var h=Math.floor(m/60),r=m%60,u=function(n,l){return"<i><b>"+n+"</b><small>"+l+"</small></i>"};if(!h)return u(m,"min");return u(h,"h")+(r?u(r,"min"):"")}
 var lastLock=false;
 function locked(){return new Date().getHours()>=21}
-function dayScore(x){return x?(x.wake?1:0)+(x.run?1:0)+(x.rs?1:0)+(x.read?1:0):0}
+function dayScore(x){if(!x)return 0;var b=x.b||x;return(b.wake?1:0)+(b.run?1:0)+(b.rs?1:0)+(b.read?1:0)}
 function sqHtml(sc,cls,fut){return'<div class="sq'+cls+(sc>=3?" hi":"")+'" style="--o:'+[0,.22,.45,.72,1][sc]+'"><i>'+(fut?"":sc)+'</i></div>'}
 function weekRow(L){var d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));var t=key(new Date()),h="",sum=0;for(var i=0;i<7;i++){var k=key(d),sc=dayScore(L[k]);sum+=sc;h+=sqHtml(sc,k===t?" td":"",k>t);d.setDate(d.getDate()+1)}return{h:h,sum:sum}}
 function blankRow(){var h="";for(var i=0;i<7;i++)h+=sqHtml(0,"",true);return h}
@@ -191,7 +191,7 @@ function curLog(){return view===(me&&me.id)?log:((others[view]&&others[view].day
 function render(){
   if(!me)return;
   var L=curLog(),ro=view!==me.id,t=L[today]||{};
-  lastLock=locked();var lk=!ro&&lastLock;
+  lastLock=locked();var lk=!ro&&lastLock&&!editOn();
   $("body").className=(ro?"ro":"")+(lk?" lk":"");
   $("km").disabled=ro||lk;$("min").disabled=ro||lk;
   chk("c-wake",!!t.wake);runChk(t);chk("c-read",!!t.read);chk("c-video",(t.cn||0)>0);
@@ -223,7 +223,14 @@ function renderTabs(){
   ids.forEach(function(i){tab(i,others[i].name||"相手")});
   if(!ids.length){var s=document.createElement("span");s.className="sub";s.style.fontSize="12px";s.textContent="相手の登録待ち";$("tabs").appendChild(s)}
 }
-function mine(fn){return function(){if(view!==me.id||locked())return;fn(day());save();render()}}
+function snap(x){return{wake:!!x.wake,run:!!x.run,rs:!!x.rs,read:!!x.read}}
+function mine(fn){return function(){
+  var late=locked();
+  if(view!==me.id||(late&&!editOn()))return;
+  var t=day(),pre=snap(t);fn(t);
+  if(!t.b)t.b=pre;
+  if(!late)t.b=snap(t);
+  save();render()}}
 $("c-wake").onclick=mine(function(t){t.wake=!t.wake});
 $("c-run").onclick=mine(function(t){if(!t.run){t.run=true;t.rs=false}else if(!t.rs){t.rs=true}else{t.run=false;t.rs=false}});
 $("c-read").onclick=mine(function(t){t.read=!t.read;if(t.read&&!t.min)t.min=20});
@@ -293,7 +300,8 @@ setInterval(function(){var k=key(new Date());if(!me)return;if(k!==today){today=k
   const parseMin=v=>{v=String(v).trim().toLowerCase();const m=v.match(/^(\d+(?:\.\d+)?)\s*h(?:\s*(\d+))?/);if(m)return Math.round(parseFloat(m[1])*60+(+m[2]||0));const n=parseFloat(v);return isNaN(n)?null:Math.round(n)};
   const dstr=i=>{const d=new Date();d.setDate(d.getDate()-i);return key(d)};
   const ent=k=>log[k]||(log[k]={wake:false,run:false,rs:false,km:0,read:false,min:0,cn:0});
-  const setF={wake:(x,v)=>{x.w2=v;if(!v)x.wake=false},run:(x,v)=>{x.r2=v;if(!v){x.run=false;x.rs=false}},read:(x,v)=>{x.d2=v;if(!v)x.read=false},video:(x,v)=>{x.v=v;if(!v)x.cn=0}};
+  const eb=x=>{if(!x.b)x.b=snap(x)};
+  const setF={wake:(x,v)=>{x.w2=v;if(!v){eb(x);x.wake=false}},run:(x,v)=>{x.r2=v;if(!v){eb(x);x.run=false;x.rs=false}},read:(x,v)=>{x.d2=v;if(!v){eb(x);x.read=false}},video:(x,v)=>{x.v=v;if(!v)x.cn=0}};
   const isDone={wake:x=>x.wake||x.w2,run:x=>x.run||x.r2,read:x=>x.read||x.d2,video:x=>x.cn>0||x.v};
   const setStreak=(kind,n)=>{
     const t=log[today],a=(t&&isDone[kind](t))?0:1;
