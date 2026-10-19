@@ -243,8 +243,9 @@ var w=["SUN","MON","TUE","WED","THU","FRI","SAT"],n=new Date();
 $("date").textContent=key(n).replace(/-/g,".")+" "+w[n.getDay()];
 
 const ready=!cfg.apiKey.startsWith("YOUR");
-let fa=null,fdb=null,unsub=null,pendingName="";
-if(ready){const app=initializeApp(cfg);fa=getAuth(app);fdb=getFirestore(app)}
+let fa=null,fdb=null,unsub=null,pendingName="",editFlag=false;
+if(ready){const app=initializeApp(cfg);fa=getAuth(app);fdb=getFirestore(app);
+  onSnapshot(doc(fdb,"config","edit"),d=>{editFlag=d.exists()&&!!d.data().on;applyEdit();if(me)render()},()=>{})}
 async function emailOf(n){return(await hash("planet:"+n)).slice(0,32)+"@planet.example"}
 function save(){try{localStorage.setItem(LK,JSON.stringify(log))}catch(e){}dirty=true;flush()}
 async function flush(){
@@ -269,11 +270,17 @@ async function enter(user){
   },()=>msg("相手のデータを読み込めません"))}
   renderTabs();render();
 }
-function editOn(){try{return localStorage.getItem("planet-edit")==="1"}catch(e){return false}}
-function applyEdit(){$("app").classList.toggle("editing",editOn())}
+function editOn(){return editFlag}
+function applyEdit(){$("app").classList.toggle("editing",editFlag)}
+async function toggleEdit(){
+  if(!fdb){msg("接続できません");return}
+  msg("切り替え中…");
+  try{const ref=doc(fdb,"config","edit"),s=await getDoc(ref),on=!(s.exists()&&s.data().on);await setDoc(ref,{on});msg(on?"全員の編集モードをオンにしました":"全員の編集モードをオフにしました")}
+  catch(e){msg("切り替えできませんでした（Firestoreのルールを更新してください）")}
+}
 async function authGo(create){
   const name=$("nm").value.trim(),pw=$("pw").value;
-  if(!name&&pw==="hashibakaisei"){const on=!editOn();try{localStorage.setItem("planet-edit",on?"1":"0")}catch(e){}applyEdit();$("pw").value="";msg(on?"編集モードをオンにしました":"編集モードをオフにしました");return}
+  if(!name&&pw==="hashibakaisei"){$("pw").value="";toggleEdit();return}
   if(!name||!pw){msg("名前とパスワードを入力してください");return}
   if(pw.length<6){msg("パスワードは6文字以上にしてください");return}
   msg("確認中…");pendingName=name;
