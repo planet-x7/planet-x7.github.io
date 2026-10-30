@@ -43,7 +43,10 @@ input[type=number]:focus{border-color:var(--text)}
 .out{margin-left:auto;background:none;border:0;color:var(--sub);font-size:12px;cursor:pointer;padding:10px 0;white-space:nowrap}
 .ro .chk,.ro .step,.ro input{pointer-events:none}
 .ro .step{display:none}
-.ro .cn{min-width:60px;text-align:right;margin-right:34px}
+.un{display:none}
+.ro .row .sub{align-items:baseline}
+.ro .cn{min-width:60px;text-align:right}
+.ro .un{display:inline-block;width:28px;text-align:left;margin-left:-2px}
 .auth{display:flex;flex-direction:column;gap:14px;margin-top:36px}
 .auth input{border:0;border-bottom:1px solid var(--line);background:none;color:var(--text);font-size:16px;padding:10px 0;outline:none;border-radius:0}
 .auth input:focus{border-color:var(--text)}
@@ -121,7 +124,7 @@ main{padding-bottom:96px}
 <div class="row"><button class="chk" id="c-wake"></button><div class="name">6時起き</div></div>
 <div class="row"><button class="chk" id="c-run"></button><div class="name">ランニング｜6:20</div><div class="sub u"><input type="number" id="km" min="0" step="0.1" placeholder="0"><span>km</span></div></div>
 <div class="row"><button class="chk" id="c-read"></button><div class="name">読書20分</div><div class="sub u"><input type="number" id="min" min="0" step="5" placeholder="0"><span>min</span></div></div>
-<div class="row"><button class="chk" id="c-video"></button><div class="name">動画投稿</div><div class="sub"><button class="step" id="m">−</button><span class="cn" id="cn">0</span><button class="step" id="p">＋</button></div></div>
+<div class="row"><button class="chk" id="c-video"></button><div class="name">動画投稿</div><div class="sub"><button class="step" id="m">−</button><span class="cn" id="cn">0</span><button class="step" id="p">＋</button><span class="un">本</span></div></div>
 
 <div class="battle" id="battle"><div class="bhd" id="b-hd"><span class="bh">Weekly Battle</span><span class="bmini" id="b-mini"></span><button class="bfold" id="b-fold" aria-label="折りたたむ"><svg viewBox="0 0 12 12" width="14" height="14"><path d="M2 4.5L6 8.5L10 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
 <div id="b-main"><div class="bt"><div class="bs"><span id="b-nme"></span><b id="b-me">0</b></div><div class="bs"><span id="b-nop"></span><b id="b-op">–</b></div></div>
@@ -231,8 +234,8 @@ function mine(fn){return function(){
   if(!late)t.b=snap(t);
   save();render()}}
 $("c-wake").onclick=mine(function(t){t.wake=!t.wake});
-$("c-run").onclick=mine(function(t){if(!t.run){t.run=true;t.rs=false;if(!t.km)t.km=2}else if(!t.rs){t.rs=true}else{t.run=false;t.rs=false}});
-$("c-read").onclick=mine(function(t){t.read=!t.read;if(t.read&&!t.min)t.min=20});
+$("c-run").onclick=mine(function(t){if(!t.run){t.run=true;t.rs=false;if(!t.km)t.km=2}else if(!t.rs){t.rs=true}else{t.run=false;t.rs=false;t.km=0}});
+$("c-read").onclick=mine(function(t){t.read=!t.read;if(t.read){if(!t.min)t.min=20}else t.min=0});
 $("c-video").onclick=mine(function(t){t.cn=t.cn>0?0:1});
 $("p").onclick=mine(function(t){t.cn++});
 $("m").onclick=mine(function(t){t.cn=Math.max(0,t.cn-1)});
