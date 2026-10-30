@@ -42,7 +42,8 @@ input[type=number]:focus{border-color:var(--text)}
 .tab.on{color:var(--text);border-color:var(--acc)}
 .out{margin-left:auto;background:none;border:0;color:var(--sub);font-size:12px;cursor:pointer;padding:10px 0;white-space:nowrap}
 .ro .chk,.ro .step,.ro input{pointer-events:none}
-.ro .step{visibility:hidden}
+.ro .step{display:none}
+.ro .cn{min-width:60px;text-align:right;margin-right:34px}
 .auth{display:flex;flex-direction:column;gap:14px;margin-top:36px}
 .auth input{border:0;border-bottom:1px solid var(--line);background:none;color:var(--text);font-size:16px;padding:10px 0;outline:none;border-radius:0}
 .auth input:focus{border-color:var(--text)}
@@ -76,7 +77,6 @@ input[type=number]:focus{border-color:var(--text)}
 .sq::before{content:"";position:absolute;inset:0;background:var(--acc);opacity:var(--o,0)}
 .sq i{position:relative;font-style:normal}
 .sq.hi{color:var(--text)}
-.sq.td{outline:1.5px solid var(--text);outline-offset:-1.5px}
 .lk .row{opacity:.5;pointer-events:none}
 
 :root{--card:#f5f5f5}
@@ -231,7 +231,7 @@ function mine(fn){return function(){
   if(!late)t.b=snap(t);
   save();render()}}
 $("c-wake").onclick=mine(function(t){t.wake=!t.wake});
-$("c-run").onclick=mine(function(t){if(!t.run){t.run=true;t.rs=false}else if(!t.rs){t.rs=true}else{t.run=false;t.rs=false}});
+$("c-run").onclick=mine(function(t){if(!t.run){t.run=true;t.rs=false;if(!t.km)t.km=2}else if(!t.rs){t.rs=true}else{t.run=false;t.rs=false}});
 $("c-read").onclick=mine(function(t){t.read=!t.read;if(t.read&&!t.min)t.min=20});
 $("c-video").onclick=mine(function(t){t.cn=t.cn>0?0:1});
 $("p").onclick=mine(function(t){t.cn++});
