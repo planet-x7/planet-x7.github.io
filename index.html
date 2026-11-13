@@ -15,8 +15,8 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
 main{max-width:520px;margin:0 auto;padding:28px 20px 48px}
-h1{margin:0 0 20px;font-family:"Jost",system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:26px;font-weight:300;letter-spacing:.24em;text-indent:.24em;line-height:1.2;text-align:center}
-.date{color:var(--sub);font-size:11px;letter-spacing:.14em;text-align:center;margin:-12px 0 24px}
+h1{margin:0 0 14px;font-family:"Jost",system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:26px;font-weight:300;letter-spacing:.24em;text-indent:.24em;line-height:1.2;text-align:center}
+.date{color:var(--sub);font-size:11px;letter-spacing:.14em;text-align:center;margin:-12px 0 12px}
 #w-min{gap:0;justify-content:center}
 #w-min i{display:flex;align-items:baseline;font-style:normal}
 #body .stat small{margin-left:0}
@@ -27,8 +27,8 @@ h2{font-size:12px;font-weight:500;color:var(--sub);margin:32px 0 4px;letter-spac
 .chk.on{background:var(--acc);border-color:var(--acc)}
 .name{flex:1;font-size:15px}
 .sub{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:13px}
-input[type=number]{width:60px;padding:4px 0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;color:var(--text);font-size:15px;text-align:right;outline:none}
-input[type=number]:focus{border-color:var(--text)}
+input.num{width:60px;padding:4px 0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;color:var(--text);font-size:15px;text-align:right;outline:none}
+input.num:focus{border-color:var(--text)}
 .sub.u{align-items:baseline;gap:6px}
 .sub.u span{width:28px;text-align:left}
 .step{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--text);font-size:15px;cursor:pointer;padding:0}
@@ -93,6 +93,7 @@ main{padding-bottom:96px}
 #body{display:grid;grid-template-columns:repeat(12,1fr);gap:8px}
 #body h2,#body .row{grid-column:1/-1}
 #body h2{margin:22px 0 0}
+#body h2:first-child{margin-top:8px}
 #body .stat{flex-direction:column;align-items:center;gap:4px;border:0;background:var(--card);border-radius:12px;padding:14px 4px;font-size:11px;color:var(--sub);text-align:center}
 #body .stat b{color:var(--text);font-size:24px}
 #body .stat small{width:auto;margin-left:2px}
@@ -122,8 +123,8 @@ main{padding-bottom:96px}
 <div id="body">
 <h2>Today</h2>
 <div class="row"><button class="chk" id="c-wake"></button><div class="name">6時起き</div></div>
-<div class="row"><button class="chk" id="c-run"></button><div class="name">ランニング｜6:20</div><div class="sub u"><input type="number" id="km" min="0" step="0.1" placeholder="0"><span>km</span></div></div>
-<div class="row"><button class="chk" id="c-read"></button><div class="name">読書20分</div><div class="sub u"><input type="number" id="min" min="0" step="5" placeholder="0"><span>min</span></div></div>
+<div class="row"><button class="chk" id="c-run"></button><div class="name">ランニング</div><div class="sub u"><input type="number" class="num" id="km" min="0" step="0.1" placeholder="0"><span>km</span></div></div>
+<div class="row"><button class="chk" id="c-read"></button><div class="name">読書20min</div><div class="sub u"><input type="text" inputmode="numeric" class="num" id="min" placeholder="0"><span id="u-min">min</span></div></div>
 <div class="row"><button class="chk" id="c-video"></button><div class="name">動画投稿</div><div class="sub"><button class="step" id="m">−</button><span class="cn" id="cn">0</span><button class="step" id="p">＋</button><span class="un">本</span></div></div>
 
 <div class="battle" id="battle"><div class="bhd" id="b-hd"><span class="bh">Weekly Battle</span><span class="bmini" id="b-mini"></span><button class="bfold" id="b-fold" aria-label="折りたたむ"><svg viewBox="0 0 12 12" width="14" height="14"><path d="M2 4.5L6 8.5L10 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
@@ -189,6 +190,8 @@ function sqHtml(sc,cls,fut){return'<div class="sq'+cls+(sc>=1?" hi":"")+'" style
 function weekRow(L){var d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));var t=key(new Date()),h="",sum=0;for(var i=0;i<7;i++){var k=key(d),sc=dayScore(L[k]);sum+=sc;h+=sqHtml(sc,k===t?" td":"",k>t);d.setDate(d.getDate()+1)}return{h:h,sum:sum}}
 function blankRow(){var h="";for(var i=0;i<7;i++)h+=sqHtml(0,"",true);return h}
 function runChk(t){var b=$("c-run"),st=t.run?(t.rs?2:1):0;b.className="chk h";b.innerHTML='<svg viewBox="0 0 22 22" width="22" height="22"><defs><clipPath id="hc"><rect x="0" y="0" width="11" height="22"/></clipPath></defs>'+(st>0?'<path d="M11 .75A10.25 10.25 0 0 0 11 21.25Z" fill="var(--acc)"/>':'')+(st>1?'<path d="M11 .75A10.25 10.25 0 0 1 11 21.25Z" fill="var(--acc)"/>':'')+'<circle cx="11" cy="11" r="10.25" fill="none" stroke="'+(st?'var(--acc)':'var(--sub)')+'" stroke-width="1.5"/>'+(st>0?'<path d="M6 11.5L9.5 15L16 7.5" fill="none" stroke="var(--on)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'+(st===1?' clip-path="url(#hc)"':'')+'/>':'')+'</svg>'}
+function parseMin(v){v=String(v).trim().toLowerCase();var m=v.match(/^(\d+(?:\.\d+)?)\s*h(?:\s*(\d+))?/);if(m)return Math.round(parseFloat(m[1])*60+(+m[2]||0));var n=parseFloat(v);return isNaN(n)?null:Math.round(n)}
+function fmtIn(m){m=+m||0;if(!m)return"";var h=Math.floor(m/60),r=m%60;return h?h+"h"+(r?r:""):String(m)}
 function curLog(){return view===(me&&me.id)?log:((others[view]&&others[view].days)||{})}
 function render(){
   if(!me)return;
@@ -197,7 +200,7 @@ function render(){
   $("body").className=(ro?"ro":"")+(lk?" lk":"");
   $("km").disabled=ro||lk;$("min").disabled=ro||lk;
   chk("c-wake",!!t.wake);runChk(t);chk("c-read",!!t.read);chk("c-video",(t.cn||0)>0);
-  $("km").value=t.km||"";$("min").value=t.min||"";$("cn").textContent=t.cn||0;
+  $("km").value=t.km||"";$("min").value=fmtIn(t.min);$("u-min").style.visibility=(t.min>=60&&t.min%60===0)?"hidden":"visible";$("cn").textContent=t.cn||0;
   $("s-wake").textContent=streak(L,function(x){return x.wake||x.w2});
   $("s-run").textContent=streak(L,function(x){return x.run||x.r2});
   $("s-read").textContent=streak(L,function(x){return x.read||x.d2});
@@ -240,7 +243,9 @@ $("c-video").onclick=mine(function(t){t.cn=t.cn>0?0:1});
 $("p").onclick=mine(function(t){t.cn++});
 $("m").onclick=mine(function(t){t.cn=Math.max(0,t.cn-1)});
 $("km").onchange=function(){var v=this.value;mine(function(t){t.km=Math.max(0,parseFloat(v)||0);if(t.km>0)t.run=true})()};
-$("min").onchange=function(){var v=this.value;mine(function(t){t.min=Math.max(0,parseInt(v)||0);if(t.min>0)t.read=true})()};
+$("min").onfocus=function(){var t=curLog()[today]||{};this.value=t.min||""};
+$("min").onblur=function(){if(me)render()};
+$("min").onchange=function(){var v=this.value;mine(function(t){t.min=Math.max(0,parseMin(v)||0);if(t.min>0)t.read=true})()};
 var w=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],n=new Date();
 $("date").textContent=key(n).replace(/-/g,".")+" "+w[n.getDay()];
 
